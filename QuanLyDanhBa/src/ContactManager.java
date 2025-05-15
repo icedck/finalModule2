@@ -257,15 +257,15 @@ public class ContactManager implements ReadWriteFile<Contact>{
 
     @Override
     public List<Contact> readFromFIle() {
+        contacts.clear();
         try {
             FileInputStream fis = new FileInputStream(file);
             ObjectInputStream ois = new ObjectInputStream(fis);
-            ois.readObject();
-            ois.close();
-
-        } catch (ClassNotFoundException | IOException e) {
-            e.printStackTrace();
+            contacts= (List<Contact>) ois.readObject();
+        } catch (IOException | ClassNotFoundException ex) {
+            ex.printStackTrace();
         }
+        System.out.println("Da doc file");
         return contacts;
     }
 }
