@@ -1,6 +1,8 @@
+package model;
+
 import java.io.Serializable;
 
-public class Contact implements Serializable {
+public class Contact {
     private String phone;
     private String group;
     private String name;
@@ -77,15 +79,10 @@ public class Contact implements Serializable {
 
     @Override
     public String toString() {
-        return "Contact{" +
-                "phone='" + phone + '\'' +
-                ", group='" + group + '\'' +
-                ", name='" + name + '\'' +
-                ", gender='" + gender + '\'' +
-                ", address='" + address + '\'' +
-                ", birthday='" + birthday + '\'' +
-                ", email='" + email + '\'' +
-                '}';
+        return "Số điện thoại: " + phone + ", Nhóm: " + group + ", Họ tên: " + name +
+                ", Giới tính: " + gender + ", Địa chỉ: " + address +
+                (birthday != null ? ", Ngày sinh: " + birthday : "") +
+                (email != null ? ", Email: " + email : "");
     }
 }
 

@@ -1,9 +1,14 @@
+package controller;
+
+import model.Contact;
+import storge.ReadWriteFile;
+
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
-public class ContactManager implements ReadWriteFile<Contact>{
+public class ContactManager implements ReadWriteFile<Contact> {
     private List<Contact> contacts = new ArrayList<>();
     private static final String CONTACTS_FILE = "data/contacts.csv";
     private static File file = new File(CONTACTS_FILE);
@@ -244,28 +249,48 @@ public class ContactManager implements ReadWriteFile<Contact>{
 
     @Override
     public void writeToFIle() {
-        try {
-            FileOutputStream fos = new FileOutputStream(file);
-            ObjectOutputStream oos = new ObjectOutputStream(fos);
-            oos.writeObject(contacts);
-            oos.close();
+        try (BufferedWriter bw = new BufferedWriter(new FileWriter(file))) {
+            bw.write("Số điện thoại,Nhóm,Họ tên,Giới tính,Địa chỉ,Ngày sinh,Email");
+            bw.newLine();
+            for (Contact contact : contacts) {
+                bw.write(contact.getPhone() + "," +
+                        contact.getGroup() + "," +
+                        contact.getName() + "," +
+                        contact.getGender() + "," +
+                        contact.getAddress() + "," +
+                        contact.getBirthday() + "," +
+                        contact.getEmail());
+                bw.newLine();
+            }
+            System.out.println("Đã lưu vào file");
         } catch (IOException e) {
-            e.printStackTrace();
+            System.err.println("Lỗi khi ghi vào file: " + e.getMessage());
         }
-        System.out.println("Da luu vao file");
     }
 
     @Override
     public List<Contact> readFromFIle() {
-        contacts.clear();
-        try {
-            FileInputStream fis = new FileInputStream(file);
-            ObjectInputStream ois = new ObjectInputStream(fis);
-            contacts= (List<Contact>) ois.readObject();
-        } catch (IOException | ClassNotFoundException ex) {
-            ex.printStackTrace();
+        if (!file.exists()) {
+            System.out.println("File không tồn tại. Tạo file mới.");
+            return new ArrayList<>();
         }
-        System.out.println("Da doc file");
+        contacts = new ArrayList<>();
+        try (BufferedReader br = new BufferedReader(new FileReader(file))) {
+            String line;
+            // Đọc và bỏ qua dòng tiêu đề
+            br.readLine();
+            while ((line = br.readLine()) != null) {
+                String[] data = line.split(",");
+                if (data.length == 7) {
+                    contacts.add(new Contact(data[0], data[1], data[2], data[3], data[4], data[5], data[6]));
+                } else {
+                    System.err.println("Dòng không hợp lệ: " + line);
+                }
+            }
+            System.out.println("Đã đọc dữ liệu từ file.");
+        } catch (IOException e) {
+            System.err.println("Lỗi khi đọc file: " + e.getMessage());
+        }
         return contacts;
     }
 }

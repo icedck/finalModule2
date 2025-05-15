@@ -1,3 +1,5 @@
+package storge;
+
 import java.util.List;
 
 public interface ReadWriteFile<E> {
